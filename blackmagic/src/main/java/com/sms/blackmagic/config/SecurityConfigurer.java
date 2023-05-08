@@ -26,23 +26,30 @@ public class SecurityConfigurer {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http.authorizeHttpRequests(authorizeRequests ->
-                {
-                    try {
-                        authorizeRequests
-                                .requestMatchers(HttpMethod.POST, "/user").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.PUT, "/user").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/user/**").hasRole("ADMIN");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-        );
-        http.csrf().disable();
-        http.httpBasic();
+        http
+                .authorizeRequests()
+                .anyRequest().permitAll()
+                .and()
+                .csrf().disable()
+                .httpBasic().disable();
         return http.build();
+
+//        http.authorizeHttpRequests(authorizeRequests ->
+//                {
+//                    try {
+//                        authorizeRequests
+//                                .requestMatchers(HttpMethod.POST, "/user").hasRole("ADMIN")
+//                                .requestMatchers(HttpMethod.PUT, "/user").hasRole("ADMIN")
+//                                .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
+//                                .requestMatchers(HttpMethod.GET, "/user/**").hasRole("ADMIN");
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//        );
+//        http.csrf().disable();
+//        http.httpBasic().disable();
+//        return http.build();
     }
 
 
