@@ -1,30 +1,34 @@
 package com.sms.blackmagic.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+//@Data
 @Entity
-@Table(name="company")
+@ToString
+@Getter
+@Setter
+@Builder
+//@Table(name="company")
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicUpdate
 public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "company_id")
+    @Column(name = "company_id", nullable = false)
     private Integer companyId;
 
-    @Column(name = "company_name")
+    @Column(name = "company_name", nullable = false, length = 50)
     private String companyName;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<User> users = new ArrayList<>();
+//    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<User> users = new ArrayList<>();
 
 }
 
