@@ -19,10 +19,18 @@ public class CompanyController {
     }
 
     // 기관 정보 수정
-
+    @PatchMapping("/company/{companyId}")
+    public Company edit(@PathVariable("companyId") Integer companyId, @RequestBody Company company){
+        Company updatedCompany = companyService.updateCompany(companyId, company);
+        return updatedCompany;
+    }
 
     // 기관 정보 삭제
-
+    @DeleteMapping("/company/{companyId}")
+    public Company delete(@PathVariable("companyId") Integer companyId){
+        companyService.deleteCompany(companyId);
+        return companyService.getCompanyDetail(companyId);
+    }
 
     // 기관 상세 조회
     @GetMapping("/company/{companyId}")
