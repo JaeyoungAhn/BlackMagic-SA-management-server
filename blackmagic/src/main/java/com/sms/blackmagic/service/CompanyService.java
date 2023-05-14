@@ -5,6 +5,8 @@ import com.sms.blackmagic.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CompanyService {
@@ -45,5 +47,20 @@ public class CompanyService {
         Company company = companyRepository.findByCompanyId(companyId);
         return company;
     }
+
+    public Company findByCompanyName(String companyName) {
+        List<Company> companyList = companyRepository.findAll();
+        Company targetCompany = new Company();
+        for(Company company: companyList) {
+            if(company.getCompanyName().equals(companyName)) {
+                targetCompany = company;
+                break;
+            }
+        }
+
+        return targetCompany;
+    }
+
+
 
 }
