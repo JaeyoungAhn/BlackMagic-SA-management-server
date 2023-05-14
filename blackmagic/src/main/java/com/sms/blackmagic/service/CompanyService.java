@@ -24,10 +24,23 @@ public class CompanyService {
     }
 
     // 기관 정보 수정
+    public Company updateCompany(Integer companyId, Company company){
+        Company tempCompany = companyRepository.findByCompanyId(companyId);
 
+//        if (company.getCompanyId()!=null)
+//            tempCompany.setCompanyId(company.getCompanyId());
+        if (company.getCompanyName()!=null)
+            tempCompany.setCompanyName(company.getCompanyName());
+
+        Company updatedCompany = companyRepository.save(tempCompany);
+
+        return updatedCompany;
+    }
 
     // 기관 정보 삭제
-
+    public void deleteCompany(Integer companyId) {
+        companyRepository.deleteById(companyId);
+    }
 
     // 기관 상세 조회
     public Company getCompanyDetail(Integer companyId) {
