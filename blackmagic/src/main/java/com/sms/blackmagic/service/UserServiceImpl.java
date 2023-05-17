@@ -7,9 +7,6 @@ import com.sms.blackmagic.util.UserConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class UserServiceImpl implements UserService{
 
@@ -45,13 +42,5 @@ public class UserServiceImpl implements UserService{
     public UserDTO findUserById(Integer userId) {
         User user = userRepository.findById(userId).orElse(null);
         return user != null ? userConverter.fromUser(user) : null;
-    }
-
-    @Override
-    public List<UserDTO> findAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(userConverter::fromUser)
-                .collect(Collectors.toList());
     }
 }

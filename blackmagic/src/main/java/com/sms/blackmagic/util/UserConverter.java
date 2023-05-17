@@ -11,7 +11,7 @@ public class UserConverter {
 
     private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public User fromUserDTO(UserDTO userDTO) {
+    public static User fromUserDTO(UserDTO userDTO) {
         User user = new User();
         Company company = new Company();
         user.setUserId(userDTO.getUserId());
@@ -33,7 +33,7 @@ public class UserConverter {
         return user;
     }
 
-    public UserDTO fromUser(User user) {
+    public static UserDTO fromUser(User user) {
         return new UserDTO(
                 user.getUserId(),
                 user.getAccountName(),

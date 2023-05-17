@@ -34,6 +34,7 @@ public class PdfController {
         if (file.isEmpty() || !file.getContentType().equalsIgnoreCase("application/pdf")) {
             return ResponseEntity.badRequest().body("PDF file is required");
         }
+
         File pdfFile = PdfUtils.convertMultipartFileToFile(file);
         Record record = PdfUtils.parsePdf(pdfFile);
         Company company = companyService.findByCompanyName(record.getCompany().getCompanyName());
