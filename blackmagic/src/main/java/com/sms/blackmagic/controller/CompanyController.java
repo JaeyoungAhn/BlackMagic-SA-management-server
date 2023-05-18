@@ -5,11 +5,19 @@ import com.sms.blackmagic.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
 public class CompanyController {
     private final CompanyService companyService;
+
+    // 기관 목록 조회
+    @GetMapping("/company/list")
+    public List<Company> list() {
+        return companyService.getCompanyList();
+    }
 
     // 기관 정보 생성
     @PostMapping("/company")
