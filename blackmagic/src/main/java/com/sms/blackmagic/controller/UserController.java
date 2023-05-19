@@ -6,6 +6,8 @@ import com.sms.blackmagic.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -35,9 +37,12 @@ public class UserController {
 
     @GetMapping("/{user_id}")
     public UserDTO getUserById(@PathVariable("user_id") Integer userId) {
-        System.out.println();
-        System.out.println();
         return userService.findUserById(userId);
+    }
+
+    @GetMapping
+    public List<UserDTO> getAllUsers() {
+        return userService.findAllUsers();
     }
 
 }
