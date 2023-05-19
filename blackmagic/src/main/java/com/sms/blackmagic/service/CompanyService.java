@@ -13,6 +13,12 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
 
+    // 기관 목록 조회
+    public List<Company> getCompanyList() {
+        List<Company> companyList = companyRepository.findAll();
+        return companyList;
+    }
+
     // 기관 정보 생성
     public Company createCompany(Company company) {
         Company newCompany = Company.builder()
