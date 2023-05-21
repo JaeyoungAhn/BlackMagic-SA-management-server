@@ -40,7 +40,7 @@ public class UserController {
         return userService.findUserById(userId);
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public List<UserDTO> getAllUsers() {
         return userService.findAllUsers();
     }
