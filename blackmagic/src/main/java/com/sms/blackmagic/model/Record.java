@@ -1,5 +1,6 @@
 package com.sms.blackmagic.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -55,7 +56,7 @@ public class Record {
     @Column(name = "verification_code")
     private String verificationCode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id", referencedColumnName = "company_id")
     private Company company;
 }
