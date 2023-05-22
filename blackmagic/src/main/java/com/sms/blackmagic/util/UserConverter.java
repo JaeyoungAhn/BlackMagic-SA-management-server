@@ -44,7 +44,8 @@ public class UserConverter {
                 user.getEmail(),
                 user.getContact(),
                 user.getNote(),
-                user.getCompany().getCompanyId()
+                user.getCompany().getCompanyId(),
+                user.getRegisterDate()
         );
     }
 }

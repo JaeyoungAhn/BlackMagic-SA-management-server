@@ -1,10 +1,11 @@
 package com.sms.blackmagic.dto;
 
-import com.sms.blackmagic.model.Company;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -21,4 +22,5 @@ public class UserDTO {
     private String contact;
     private String note;
     private Integer companyId;
+    private LocalDateTime registerDate;
 }
