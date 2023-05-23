@@ -48,7 +48,7 @@ public class SecurityConfigurer {
             .requestMatchers("/user/**").hasRole("ADMIN")
             .requestMatchers("/company/**").hasRole("ADMIN")
             .requestMatchers("/auditlog/**").hasRole("ADMIN")
-//            .requestMatchers("/record/**").hasAnyRole("MASTER", "ADMIN") // Master still GETs their own
+            .requestMatchers("/record/**").hasAnyRole("MASTER", "ADMIN") // Master still GETs their own
             .requestMatchers("/pdf/**").hasAnyRole("MASTER", "ADMIN") // Master still uploads and downloads
             .anyRequest().authenticated()
             .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

@@ -3,6 +3,7 @@ package com.sms.blackmagic.controller;
 import com.sms.blackmagic.model.User;
 import com.sms.blackmagic.repository.UserRepository;
 import com.sms.blackmagic.service.CustomUserDetailsService;
+import com.sms.blackmagic.util.AuditLogUtil;
 import com.sms.blackmagic.util.AuthenticationRequest;
 import com.sms.blackmagic.util.AuthenticationResponse;
 import com.sms.blackmagic.util.JwtUtil;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 public class AuthController {
+
+    @Autowired
+    private AuditLogUtil auditLogUtil;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -54,9 +58,8 @@ public class AuthController {
 
         final String jwt = jwtUtil.generateToken(userDetails, user.getCompanyId());
 
-        String username;
-        username = jwtUtil.extractUsername(jwt);
-        System.out.println(username);
+        // 감사 로그
+        auditLogUtil.saveAuditLog(jwt, null, 2);
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
@@ -64,19 +67,13 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
 
+        String username;
         String token = jwtUtil.extractTokenFromRequest(request);
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } else {
+            auditLogUtil.saveAuditLog(token, null, 3);
         }
-
-        String username;
-        try {
-            username = jwtUtil.extractUsername(token);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        System.out.println(username);
 
         return ResponseEntity.ok().build();
     }

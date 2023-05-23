@@ -3,10 +3,8 @@ package com.sms.blackmagic.controller;
 import com.sms.blackmagic.model.*;
 import com.sms.blackmagic.model.Record;
 import com.sms.blackmagic.model.User;
-import com.sms.blackmagic.service.AttachedFileService;
-import com.sms.blackmagic.service.AuditLogService;
-import com.sms.blackmagic.service.CompanyService;
-import com.sms.blackmagic.service.RecordService;
+import com.sms.blackmagic.service.*;
+import com.sms.blackmagic.util.AuditLogUtil;
 import com.sms.blackmagic.util.JwtUtil;
 import com.sms.blackmagic.util.PdfUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +34,9 @@ public class PdfController {
     private final RecordService recordService;
     private final CompanyService companyService;
     private final AttachedFileService attachedFileService;
-    private final AuditLogService auditLogService;
+
+    @Autowired
+    private AuditLogUtil auditLogUtil;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -46,10 +46,6 @@ public class PdfController {
         if (file.isEmpty() || !file.getContentType().equalsIgnoreCase("application/pdf")) {
             return ResponseEntity.badRequest().body("PDF file is required");
         }
-
-        String token = jwtUtil.extractTokenFromRequest(request);
-        String username = jwtUtil.extractUsername(token);
-        System.out.println(username);
 
         File pdfFile = PdfUtils.convertMultipartFileToFile(file);
         Record record = PdfUtils.parsePdf(pdfFile);
@@ -64,20 +60,9 @@ public class PdfController {
         attachedFile.setRecord(getRecord);
         attachedFileService.createFile(attachedFile);
 
-        /*
-        감사 로그 임시 유저 추가
-         */
-        User user = new User();
-        user.setUserId(1);
-
-        AuditLog auditLog = new AuditLog();
-        auditLog.setUser(user);
-        auditLog.setRecord(getRecord);
-        // 로그인 로그아웃에서는 setRecord를 null로 처리
-        auditLog.setWorkType("PDF UPLOAD");
-
-        auditLogService.createLog(auditLog);
-
+        // 감사 로그
+        String token = jwtUtil.extractTokenFromRequest(request);
+        auditLogUtil.saveAuditLog(token, getRecord, 1);
 
         return ResponseEntity.ok("success");
     }
