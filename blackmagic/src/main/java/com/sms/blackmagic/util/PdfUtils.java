@@ -2,12 +2,9 @@ package com.sms.blackmagic.util;
 
 import com.sms.blackmagic.model.Company;
 import com.sms.blackmagic.model.Record;
-import com.sms.blackmagic.service.CompanyService;
-import com.sms.blackmagic.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
