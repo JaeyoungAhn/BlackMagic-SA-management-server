@@ -1,9 +1,9 @@
 package com.sms.blackmagic.controller;
 
-import com.sms.blackmagic.model.AttachedFile;
-import com.sms.blackmagic.model.Company;
+import com.sms.blackmagic.model.*;
 import com.sms.blackmagic.model.Record;
 import com.sms.blackmagic.service.AttachedFileService;
+import com.sms.blackmagic.service.AuditLogService;
 import com.sms.blackmagic.service.CompanyService;
 import com.sms.blackmagic.service.RecordService;
 import com.sms.blackmagic.util.PdfUtils;
@@ -29,6 +29,7 @@ public class PdfController {
     private final RecordService recordService;
     private final CompanyService companyService;
     private final AttachedFileService attachedFileService;
+    private final AuditLogService auditLogService;
 
     @PostMapping
     public ResponseEntity<String> uploadPdf(@RequestParam("file") MultipartFile file) throws IOException {
@@ -48,6 +49,21 @@ public class PdfController {
         attachedFile.setUploadState(true);
         attachedFile.setRecord(getRecord);
         attachedFileService.createFile(attachedFile);
+
+        /*
+        감사 로그 임시 유저 추가
+         */
+        User user = new User();
+        user.setUserId(1);
+
+        AuditLog auditLog = new AuditLog();
+        auditLog.setUser(user);
+        auditLog.setRecord(getRecord);
+        // 로그인 로그아웃에서는 setRecord를 null로 처리
+        auditLog.setWorkType("PDF UPLOAD");
+
+        auditLogService.createLog(auditLog);
+
 
         return ResponseEntity.ok("success");
     }
