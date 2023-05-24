@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsUtils;
 
 @Configuration
 @EnableWebSecurity
@@ -44,6 +45,7 @@ public class SecurityConfigurer {
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().authorizeHttpRequests()
+            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
             .requestMatchers(HttpMethod.POST, "/user/**").permitAll() // signup, login, logout
             .requestMatchers("/user/**").hasRole("ADMIN")
             .requestMatchers("/company/**").hasRole("ADMIN")
