@@ -56,7 +56,7 @@ public class AuthController {
         String accountName = authenticationRequest.getAccountName();
         User user = userRepository.findByAccountName(accountName);
 
-        final String jwt = jwtUtil.generateToken(userDetails, user.getCompanyId());
+        final String jwt = jwtUtil.generateToken(userDetails, user.getCompanyId(), user.getAuthority());
 
         // 감사 로그
         auditLogUtil.saveAuditLog(jwt, null, 2);
