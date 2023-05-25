@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Data
 @Entity
 @Table(name="record")
@@ -55,6 +53,9 @@ public class Record {
 
     @Column(name = "verification_code")
     private String verificationCode;
+
+    @Column(name = "company_id", insertable = false, updatable = false)
+    private Integer companyId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id", referencedColumnName = "company_id")
