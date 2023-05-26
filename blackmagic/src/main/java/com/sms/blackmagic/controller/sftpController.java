@@ -3,6 +3,7 @@ package com.sms.blackmagic.controller;
 import java.io.File;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -98,25 +99,16 @@ public class sftpController {
                         System.out.println("created something in directory");
                         
                         String fileName = paths.getFileName().toString();
-                       
+                        
                         
                         File pdfFile =  new File(projPath + '\\' + fileName);
                         File pdfDirectory = new File("src/main/resources/pdf/");
                         if (!pdfDirectory.exists()) {
                             pdfDirectory.mkdirs(); // 폴더가 존재하지 않을 경우 생성합니다.
                         }
-                        String localFilePath = "src/main/resources/pdf/"+ fileName;
+                        String DestPath = "src/main/resources/pdf/";
                         
-                        File destFile = new File(localFilePath);
                         
-
-                        // 파일을 로컬 파일로 복사합니다.
-                        try {
-							Files.copy(pdfFile.toPath(), destFile.toPath());
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
 						
 						
 						try {
@@ -129,7 +121,17 @@ public class sftpController {
 	                        record.setCompany(company);
 	                        
 	                        Record getRecord = recordService.createRecord(record);
+	                        File destfile = new File(DestPath,getRecord.getRecordId().toString() + ".pdf");
+	                        File localFilePath = new File(projPath + '\\' + fileName, getRecord.getRecordId().toString() + ".pdf");
 	                        
+
+	                        // 파일을 로컬 파일로 복사합니다.
+	                        try {
+								Files.copy(pdfFile.toPath(), destfile.toPath());
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 	                        
 	                        AttachedFile attachedFile = new AttachedFile();
 	                        attachedFile.setUploadState(true);
