@@ -48,8 +48,8 @@ public class SecurityConfigurer {
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
             .requestMatchers(HttpMethod.POST, "/user/**").permitAll() // signup, login, logout
             .requestMatchers("/user/**").hasRole("ADMIN")
-            .requestMatchers("/company/**").hasRole("ADMIN")
             .requestMatchers("/auditlog/**").hasRole("ADMIN")
+            .requestMatchers("/company/**").hasAnyRole("MASTER", "ADMIN") // Master still Gets their own
             .requestMatchers("/record/**").hasAnyRole("MASTER", "ADMIN") // Master still GETs their own
             .requestMatchers("/pdf/**").hasAnyRole("MASTER", "ADMIN") // Master still uploads and downloads
             .anyRequest().authenticated()
