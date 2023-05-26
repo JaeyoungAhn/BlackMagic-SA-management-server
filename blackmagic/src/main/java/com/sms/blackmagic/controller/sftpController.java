@@ -101,9 +101,14 @@ public class sftpController {
                        
                         
                         File pdfFile =  new File(projPath + '\\' + fileName);
-                        
+                        File pdfDirectory = new File("src/main/resources/pdf/");
+                        if (!pdfDirectory.exists()) {
+                            pdfDirectory.mkdirs(); // 폴더가 존재하지 않을 경우 생성합니다.
+                        }
                         String localFilePath = "src/main/resources/pdf/"+ fileName;
+                        
                         File destFile = new File(localFilePath);
+                        
 
                         // 파일을 로컬 파일로 복사합니다.
                         try {
