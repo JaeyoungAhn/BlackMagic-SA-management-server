@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/record")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class RecordController {
 
     private final RecordService recordService;

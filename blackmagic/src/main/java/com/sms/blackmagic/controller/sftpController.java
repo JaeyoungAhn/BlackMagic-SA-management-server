@@ -18,6 +18,7 @@ import java.util.concurrent.Semaphore;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,35 +31,36 @@ import com.sms.blackmagic.service.CompanyService;
 import com.sms.blackmagic.service.RecordService;
 import com.sms.blackmagic.util.PdfUtils;
 import java.nio.file.Files;
- 
+
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class sftpController {
-	
+
 	private final RecordService recordService;
     private final CompanyService companyService;
     private final AttachedFileService attachedFileService;
-    
-    
-	
+
+
+
 	@Value("${local.pdf.directory}")
     private String localPdfDirectory;
     //프로젝트 경로
     private static final String projPath = "C://sshtest";
-    
+
     private WatchKey watchKey;
     Semaphore semaphore = new Semaphore(1);
-    
+
     public sftpController (RecordService recordService, CompanyService companyService, AttachedFileService attachedFileService) {
-    	
+
     	this.recordService = recordService;
     	this.companyService = companyService;
     	this.attachedFileService = attachedFileService;
-		
+
     }
-    
-    
-    
-    
+
+
+
+
     @PostConstruct
     public void init() throws IOException {
         //watchService 생성
@@ -71,11 +73,11 @@ public class sftpController {
             StandardWatchEventKinds.ENTRY_DELETE,
             StandardWatchEventKinds.ENTRY_MODIFY,
             StandardWatchEventKinds.OVERFLOW);
-        
+
         Thread thread = new Thread(()-> {
-        	
+
             while(true) {
-            	
+
                 try {
                 	semaphore.acquire();
                     watchKey = watchService.take();//이벤트가 오길 대기(Blocking)
@@ -86,44 +88,44 @@ public class sftpController {
                 	semaphore.release();
                 }
                 List<WatchEvent<?>> events = watchKey.pollEvents();//이벤트들을 가져옴
-                
+
                 for(WatchEvent<?> event : events) {
                     //이벤트 종류
                     Kind<?> kind = event.kind();
-                    //경로 
-                   
+                    //경로
+
                     Path paths = (Path)event.context();
-                    
+
                     if(kind.equals(StandardWatchEventKinds.ENTRY_CREATE)) {
-                    	 
+
                         System.out.println("created something in directory");
-                        
+
                         String fileName = paths.getFileName().toString();
-                        
-                        
+
+
                         File pdfFile =  new File(projPath + '\\' + fileName);
                         File pdfDirectory = new File("src/main/resources/pdf/");
                         if (!pdfDirectory.exists()) {
                             pdfDirectory.mkdirs(); // 폴더가 존재하지 않을 경우 생성합니다.
                         }
                         String DestPath = "src/main/resources/pdf/";
-                        
-                        
-						
-						
+
+
+
+
 						try {
 							semaphore.acquire();
-							
-	                        
+
+
 	                        Record record;
 							record = PdfUtils.parsePdf(pdfFile);
 							Company company = companyService.findByCompanyName(record.getCompany().getCompanyName());
 	                        record.setCompany(company);
-	                        
+
 	                        Record getRecord = recordService.createRecord(record);
 	                        File destfile = new File(DestPath,getRecord.getRecordId().toString() + ".pdf");
 	                        File localFilePath = new File(projPath + '\\' + fileName, getRecord.getRecordId().toString() + ".pdf");
-	                        
+
 
 	                        // 파일을 로컬 파일로 복사합니다.
 	                        try {
@@ -132,10 +134,10 @@ public class sftpController {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
-	                        
+
 	                        AttachedFile attachedFile = new AttachedFile();
 	                        attachedFile.setUploadState(true);
-	                        
+
 	                        attachedFile.setRecord(getRecord);
 	                        attachedFileService.createFile(attachedFile);
 	                        if(pdfFile.delete()){ // f.delete 파일 삭제에 성공하면 true, 실패하면 false
@@ -150,11 +152,11 @@ public class sftpController {
 						} finally {
 							semaphore.release();
 						}
-							
-						
-                        
-                    	 
-                        
+
+
+
+
+
                     }else if(kind.equals(StandardWatchEventKinds.ENTRY_DELETE)) {
                         System.out.println("delete something in directory");
                     }else if(kind.equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
@@ -173,19 +175,19 @@ public class sftpController {
                     }
                 }
             }
-        	
+
         	});
-        
+
         thread.start();
-        
+
     }
     @GetMapping("/")
     public String test() {
-        System.out.println(projPath);        
+        System.out.println(projPath);
         return "hello";
     }
-    
-    
-    
-    
+
+
+
+
 }
