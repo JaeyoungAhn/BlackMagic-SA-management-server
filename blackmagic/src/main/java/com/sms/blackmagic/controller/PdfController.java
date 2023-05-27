@@ -24,11 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 
 @RestController
 @RequestMapping("/pdf")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class PdfController {
 
     private final RecordService recordService;
@@ -91,12 +93,14 @@ public class PdfController {
 
         // 파일이 존재하는지 확인
         if (resource.exists()) {
-            String mimeType = Files.probeContentType(new File(filePath).toPath());
+            File file = resource.getFile();
 
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + fileId)
-                    .contentType(MediaType.parseMediaType(mimeType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
+                    .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()))
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM.toString())
                     .body(resource);
+
         } else {
             throw new RuntimeException("File not found");
         }
