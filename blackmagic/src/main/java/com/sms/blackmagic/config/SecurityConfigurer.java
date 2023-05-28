@@ -14,7 +14,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -39,13 +45,25 @@ public class SecurityConfigurer {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.httpBasic().disable()
             .csrf().disable()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().authorizeHttpRequests()
-            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
             .requestMatchers(HttpMethod.POST, "/user/**").permitAll() // signup, login, logout
             .requestMatchers("/user/**").hasRole("ADMIN")
             .requestMatchers("/auditlog/**").hasRole("ADMIN")
@@ -53,7 +71,8 @@ public class SecurityConfigurer {
             .requestMatchers("/record/**").hasAnyRole("MASTER", "ADMIN") // Master still GETs their own
             .requestMatchers("/pdf/**").hasAnyRole("MASTER", "ADMIN") // Master still uploads and downloads
             .anyRequest().authenticated()
-            .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+            .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new CorsFilter(corsConfigurationSource()), JwtRequestFilter.class);
 
         return http.build();
     }

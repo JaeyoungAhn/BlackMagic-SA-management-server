@@ -32,8 +32,6 @@ import com.sms.blackmagic.service.RecordService;
 import com.sms.blackmagic.util.PdfUtils;
 import java.nio.file.Files;
 
-@RestController
-@CrossOrigin(origins = "http://localhost:3000")
 public class sftpController {
 
 	private final RecordService recordService;

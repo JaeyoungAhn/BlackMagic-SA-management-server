@@ -30,7 +30,6 @@ import java.nio.file.Files;
 @RestController
 @RequestMapping("/pdf")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class PdfController {
 
     private final RecordService recordService;
